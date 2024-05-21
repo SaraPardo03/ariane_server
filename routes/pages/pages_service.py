@@ -1,9 +1,9 @@
 
-from .pages_repository import page_repository
+from .pages_repository import pages_repository
 
 class page_service:
   def __init__(self):
-    self.repository = page_repository()
+    self.repository = pages_repository()
   
   def get_all(self) -> list[dict]:
     user_id = "8IwwL9wW3ka6awFlmzA5ZjpezIs1"

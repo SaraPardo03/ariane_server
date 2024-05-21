@@ -1,9 +1,8 @@
-import jwt
-
 from flask.views import MethodView
-from flask import abort
 from flask import jsonify
 from flask_smorest import Blueprint
+
+from utils.jwt_decorator import jwt_required
 
 from .story import Story
 from .stories_service import stories_service
@@ -12,12 +11,13 @@ from .dto.request.story_create import create_story
 from .dto.request.story_update import update_story
 from .dto.response.story_response import story_response, story_full_response, stories_response
 
-from .story_mapper import to_entity, to_dict
+from .story_mapper import to_dict
 
 stories_service = stories_service()
 
 stories = Blueprint("stories", "stories", url_prefix="/stories", description="stories routes")
  
+
 @stories.route("/<user_id>")
 class stories_controller(MethodView):
   """
@@ -25,7 +25,8 @@ class stories_controller(MethodView):
 
     This controller provides endpoints for retrieving, creating, updating, and deleting stories.
   """
-  @stories.response(status_code=200, schema=stories_response)
+  @stories.response(200, stories_response)
+  @jwt_required
   def get(self, user_id:str):
     """
       Retrieve all stories associated with a user.
@@ -46,7 +47,8 @@ class stories_controller(MethodView):
       return jsonify({"error": str(e)}), 500
       
   @stories.arguments(create_story)
-  @stories.response(status_code=201, schema=story_full_response)
+  @stories.response(201, story_full_response)
+  @jwt_required
   def post(self, story_data:dict, user_id:str):
     """
       Create a new story for a user.
@@ -80,7 +82,8 @@ class stories_controller(MethodView):
     """
       Controller class for managing individual stories.
     """
-    @stories.response(status_code=200, schema=story_response)
+    @stories.response(200, story_response)
+    @jwt_required
     def get(self, story_id:str, user_id:str,):
       """
         Retrieve a story by its identifier.
@@ -105,6 +108,7 @@ class stories_controller(MethodView):
           return jsonify({"error": str(e)}), 500
           
     @stories.response(status_code=200)
+    @jwt_required
     def delete(self, story_id:str, user_id:str,):
       """
         Delete a story by its identifier.
@@ -131,7 +135,8 @@ class stories_controller(MethodView):
         return jsonify({"error": str(e)}), 500
     
     @stories.arguments(update_story)
-    @stories.response(status_code=200, schema=story_response)
+    @stories.response(200, story_response)
+    @jwt_required
     def put(self, story_data:dict, story_id:str, user_id:str,):
       """
         Update a story by its identifier.

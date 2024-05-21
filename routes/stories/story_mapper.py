@@ -11,12 +11,11 @@ def to_entity(story_data: dict) -> Story:
     Returns:
         Story: The Story object created from the provided data.
     """
-    print("to_entity", type(story_data))
     s = Story()
     s.id = str(story_data.get("_id"))
     s.user_id = story_data.get("user_id")
     s.title = story_data.get("title")
-    s.summary = story_data.get("summary")
+    s.summary = story_data.get("summary", "")
     return s
 
 def to_dict(s: Story) -> dict:

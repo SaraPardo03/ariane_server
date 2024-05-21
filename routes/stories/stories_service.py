@@ -1,8 +1,6 @@
 from .stories_repository import stories_repository
 from .story import Story
 
-from bson.objectid import ObjectId
-
 class stories_service:
   """
   Service for managing stories.
