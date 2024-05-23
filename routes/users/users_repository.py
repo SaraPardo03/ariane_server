@@ -60,13 +60,19 @@ class users_repository:
     
     user_data = to_dict(u)
 
-    result = self.collection.insert_one(user_data)
+    try:
+      result = self.collection.insert_one(user_data)
+
+      if result.inserted_id:
+        u.id = str(result.inserted_id)
+        return u
+      else:
+        raise Exception("Failed to insert user")
+      
+    except Exception as e:
+      raise Exception(f"An error occurred while creating the user: {e}") from e
     
-    if result.inserted_id:
-      u.id = str(result.inserted_id)
-      return u
-    else:
-      raise Exception("Failed to insert user")
+    
     
   def update_user(self, user: User) -> User:
     try:

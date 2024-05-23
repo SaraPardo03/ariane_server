@@ -2,16 +2,14 @@ from marshmallow import Schema, fields
 
 # Define a schema for the reponse
 class user_response(Schema):
-  firstname = fields.String() 
-  lastname = fields.String()
-  username = fields.String()
+  id = fields.String(required=True)
   email = fields.String(required=True)
   password = fields.String(required=True)
   salt = fields.String(required=True)
-  
-
-class user_full_response(user_response):
-  _id = fields.String(required=True)
+  firstName = fields.String() 
+  lastName = fields.String()
+  userName = fields.String()
+  token = fields.String()
   
 
 class users_response(Schema):

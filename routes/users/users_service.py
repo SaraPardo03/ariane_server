@@ -43,6 +43,8 @@ class users_service:
   
   def get_user_by_email(self, email:str)->User:
     user = self.repository.get_user_by_email(email)
+    if not user:
+      return None
     return user
   
   def delete_user(self, user_id:str) -> bool:
@@ -56,9 +58,9 @@ class users_service:
     if not existing_user:
       raise ValueError(f"User with id {user_id} not found.")
     
-    existing_user.firstname = user_data.get('firstname', existing_user.firstname)
-    existing_user.lastname = user_data.get('lastname', existing_user.lastname)
-    existing_user.username = user_data.get('username', existing_user.username)
+    existing_user.first_name = user_data.get('firstName', existing_user.first_name)
+    existing_user.last_name = user_data.get('lastName', existing_user.last_name)
+    existing_user.user_name = user_data.get('userName', existing_user.user_name)
     existing_user.email = user_data.get('email', existing_user.email)
     existing_user.password = user_data.get('password', existing_user.password)
     existing_user.salt = user_data.get('salt', existing_user.salt)

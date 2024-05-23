@@ -1,9 +1,9 @@
 class User:
-  def __init__(self, id: str="", firstname: str="", lastname: str="", username: str="", email: str="", password: str="", salt: str="") -> None:
+  def __init__(self, id: str="", first_name: str="", last_name: str="", user_name: str="", email: str="", password: str="", salt: str="") -> None:
     self.id = id
-    self.firstname = firstname
-    self.lastname = lastname
-    self.username = username
+    self.first_name = first_name
+    self.last_name = last_name
+    self.user_name = user_name
     self.email = email
     self.password = password
     self.salt = salt
