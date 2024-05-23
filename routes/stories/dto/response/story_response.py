@@ -2,12 +2,16 @@ from marshmallow import Schema, fields
 
 # Define a schema for the reponse
 class story_response(Schema):
-  user_id= fields.String(required=True)
-  title = fields.String(required=True) 
+  id = fields.String(required=True)
+  userId = fields.String(required=True)
+  title = fields.String(required=True)
   summary = fields.String()
-
-class story_full_response(story_response):
-  _id = fields.String(required=True)
+  createdAt = fields.String()
+  updatedAt = fields.String()
+  totalCharacters = fields.Integer()
+  totalEnd = fields.Integer()
+  totalPages = fields.Integer()
+  totalOpenNode = fields.Integer()
 
 class stories_response(Schema):
   stories = fields.List(fields.Nested(story_response))

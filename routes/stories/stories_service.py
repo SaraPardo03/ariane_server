@@ -22,13 +22,13 @@ class stories_service:
     Retrieve all stories associated with a user.
 
     Args:
-        user_id (str): The user's identifier.
+      user_id (str): The user's identifier.
 
     Returns:
-        list[dict]: A list containing the information of all the user's stories.
+      ist[dict]: A list containing the information of all the user's stories.
     
     Raises:
-        Exception: If an error occurs while fetching the stories.
+      Exception: If an error occurs while fetching the stories.
     """
     try:
       return self.repository.get_all(user_id)
@@ -40,13 +40,13 @@ class stories_service:
     Create a new story.
 
     Args:
-        s (Story): The Story object containing the information of the new story.
+      s (Story): The Story object containing the information of the new story.
 
     Returns:
-        Story: The created Story object.
+      Story: The created Story object.
 
     Raises:
-        ValueError: If any of the required values to create the story is missing.
+      ValueError: If any of the required values to create the story is missing.
     """
     return self.repository.create_story(s)
   
@@ -55,17 +55,17 @@ class stories_service:
     Retrieve a story by its identifier.
 
     Args:
-        story_id (str): The identifier of the story.
+      story_id (str): The identifier of the story.
 
     Returns:
-        Story: The Story object corresponding to the specified identifier.
+      Story: The Story object corresponding to the specified identifier.
     
     Raises:
-        ValueError: If no story is found with the specified identifier.
+      ValueError: If no story is found with the specified identifier.
     """
     story = self.repository.get_story_by_id(story_id)
     if not story:
-        raise ValueError(f"Story with id {story_id} not found.")
+      raise ValueError(f"Story with id {story_id} not found.")
     return story
   
   def delete_story(self, story_id:str) -> bool:
@@ -73,13 +73,13 @@ class stories_service:
     Delete a story by its identifier.
 
     Args:
-        story_id (str): The identifier of the story to delete.
+      story_id (str): The identifier of the story to delete.
 
     Returns:
-        bool: True if the story is successfully deleted, False otherwise.
+      bool: True if the story is successfully deleted, False otherwise.
     
     Raises:
-        ValueError: If no story is found with the specified identifier.
+      ValueError: If no story is found with the specified identifier.
     """
     existing_story = self.repository.get_story_by_id(story_id)
     if not existing_story:
@@ -91,22 +91,28 @@ class stories_service:
     Update an existing story.
 
     Args:
-        story_id (str): The identifier of the story to update.
-        story_data (dict): The new data of the story as a dictionary.
+      story_id (str): The identifier of the story to update.
+      story_data (dict): The new data of the story as a dictionary.
 
     Returns:
-        Story: The updated Story object.
+      Story: The updated Story object.
     
     Raises:
-        ValueError: If no story is found with the specified identifier.
+      ValueError: If no story is found with the specified identifier.
     """
     existing_story = self.repository.get_story_by_id(story_id)
     if not existing_story:
       raise ValueError(f"Story with id {story_id} not found.")
     
-    existing_story.user_id = story_data.get('user_id', existing_story.user_id)
+    existing_story.user_id = story_data.get('userId', existing_story.user_id)
     existing_story.title = story_data.get('title', existing_story.title)
     existing_story.summary = story_data.get('summary', existing_story.summary)
+    existing_story.created_at = story_data.get('createdAt', existing_story.created_at)
+    existing_story.updated_at = story_data.get('updatedAt', existing_story.updated_at)
+    existing_story.total_characters = story_data.get('totalCharacters', existing_story.total_characters)
+    existing_story.total_end = story_data.get('totalEnd', existing_story.total_end)
+    existing_story.total_pages = story_data.get('totalPages', existing_story.total_pages)
+    existing_story.total_open_node = story_data.get('totalOpenNode', existing_story.total_open_node)
 
     return self.repository.update_story(existing_story)
   

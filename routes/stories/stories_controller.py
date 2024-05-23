@@ -4,20 +4,18 @@ from flask_smorest import Blueprint
 
 from utils.jwt_decorator import jwt_required
 
-from .story import Story
 from .stories_service import stories_service
 
 from .dto.request.story_create import create_story
 from .dto.request.story_update import update_story
-from .dto.response.story_response import story_response, story_full_response, stories_response
+from .dto.response.story_response import story_response, stories_response
 
-from .story_mapper import to_dict
+from .story_mapper import to_dict, to_entity
 
 stories_service = stories_service()
 
 stories = Blueprint("stories", "stories", url_prefix="/stories", description="stories routes")
  
-
 @stories.route("/<user_id>")
 class stories_controller(MethodView):
   """
@@ -42,12 +40,13 @@ class stories_controller(MethodView):
     """
     try:
       stories = stories_service.get_all(user_id)
+      stories = [to_dict(story) for story in stories]
       return {"stories": stories}
     except Exception as e:
       return jsonify({"error": str(e)}), 500
       
   @stories.arguments(create_story)
-  @stories.response(201, story_full_response)
+  @stories.response(201, story_response)
   @jwt_required
   def post(self, story_data:dict, user_id:str):
     """
@@ -65,17 +64,13 @@ class stories_controller(MethodView):
           Exception: If an error occurs while creating the story.
     """
     try:
-      new_story = Story(user_id=user_id, title=story_data['title'], summary=story_data['summary'])
-      created_story = stories_service.create_story(new_story)
-      return to_dict(created_story)
-    
+      story = stories_service.create_story(to_entity(story_data))
     except ValueError as ve:
       return jsonify({"error": str(ve)}), 400
-      #abort(400, description=str(ve))
     except Exception as e:
       return jsonify({"error": str(e)}), 500
   
-
+    return jsonify({"story": to_dict(story)})
 
   @stories.route("/<user_id>/<story_id>")
   class story_controller(MethodView):
@@ -101,7 +96,7 @@ class stories_controller(MethodView):
       """
       try:
           story = stories_service.get_story_by_id(story_id)
-          return to_dict(story)
+          return jsonify({"story": to_dict(story)})
       except ValueError as ve:
           return jsonify({"error": str(ve)}), 404
       except Exception as e:
@@ -155,7 +150,7 @@ class stories_controller(MethodView):
         """
       try:
         updated_story = stories_service.update_story(story_id, story_data)
-        return to_dict(updated_story)
+        return jsonify({"user": to_dict(updated_story)})
       except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
       except Exception as e:

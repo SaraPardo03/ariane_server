@@ -44,7 +44,7 @@ class stories_repository:
         Exception: If an error occurs while retrieving the stories.
     """
     try:
-      stories_collection = self.collection.find({"user_id": user_id})
+      stories_collection = self.collection.find({"userId": ObjectId(user_id)})
       return [to_entity(story) for story in stories_collection]
     except Exception as e:
       raise Exception(f"Failed to get stories: {e}") from e
@@ -111,15 +111,22 @@ class stories_repository:
       raise ValueError("Story user_id cannot be empty.")
     if not s.title :
       raise ValueError("Story title cannot be empty.")
-    
+  
     story_data = to_dict(s)
-    result = self.collection.insert_one(story_data)
+    story_data["userId"] = ObjectId(story_data["userId"])
     
-    if result.inserted_id:
-      s.id = str(result.inserted_id)
-      return s
-    else:
-      raise Exception("Failed to insert story")
+    try:
+      result = self.collection.insert_one(story_data)
+
+      if result.inserted_id:
+        s.id = str(result.inserted_id)
+        return s
+      else:
+        raise Exception("Failed to insert story")
+      
+    except Exception as e:
+      raise Exception(f"An error occurred while creating the story: {e}") from e
+    
     
   def update_story(self, story: Story) -> Story:
     """

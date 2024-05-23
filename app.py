@@ -1,10 +1,13 @@
 from flask import Flask
 from flask_smorest import Api
 
-from routes.pages.pages_controller import pages
-from routes.stories.stories_controller import stories
+from flask_cors import CORS
+
 from routes.users.users_controller import users, sign_in, sign_up
+from routes.stories.stories_controller import stories
+
 server = Flask(__name__)
+CORS(server, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 class APIConfig:
   API_TITLE = "Ariane Library API V1"
@@ -20,7 +23,6 @@ server.config.from_object(APIConfig)
 
 api = Api(server)
 
-api.register_blueprint(pages)
 api.register_blueprint(stories)
 api.register_blueprint(users)
 api.register_blueprint(sign_in)
