@@ -68,6 +68,37 @@ class stories_service:
       raise ValueError(f"Story with id {story_id} not found.")
     return story
   
+  def update_story(self, story_id: str, story_data: dict) -> Story:
+    """
+    Update an existing story.
+
+    Args:
+      story_id (str): The identifier of the story to update.
+      story_data (dict): The new data of the story as a dictionary.
+
+    Returns:
+      Story: The updated Story object.
+    
+    Raises:
+      ValueError: If no story is found with the specified identifier.
+    """
+    print("update", story_id, story_data.get("id"))
+    existing_story = self.repository.get_story_by_id(story_id)
+    if not existing_story:
+      raise ValueError(f"Story with id {story_id} not found.")
+    
+    existing_story.user_id = story_data.get('userId', existing_story.user_id)
+    existing_story.title = story_data.get('title', existing_story.title)
+    existing_story.summary = story_data.get('summary', existing_story.summary)
+    existing_story.created_at = story_data.get('createdAt', existing_story.created_at)
+    existing_story.updated_at = story_data.get('updatedAt', existing_story.updated_at)
+    existing_story.total_characters = story_data.get('totalCharacters', existing_story.total_characters)
+    existing_story.total_end = story_data.get('totalEnd', existing_story.total_end)
+    existing_story.total_pages = story_data.get('totalPages', existing_story.total_pages)
+    existing_story.total_open_node = story_data.get('totalOpenNode', existing_story.total_open_node)
+
+    return self.repository.update_story(existing_story)
+  
   def delete_story(self, story_id:str) -> bool:
     """
     Delete a story by its identifier.
@@ -86,33 +117,4 @@ class stories_service:
         raise ValueError(f"Story with id {story_id} not found.")
     return self.repository.delete_story(story_id)
   
-  def update_story(self, story_id: str, story_data: dict) -> Story:
-    """
-    Update an existing story.
-
-    Args:
-      story_id (str): The identifier of the story to update.
-      story_data (dict): The new data of the story as a dictionary.
-
-    Returns:
-      Story: The updated Story object.
-    
-    Raises:
-      ValueError: If no story is found with the specified identifier.
-    """
-    existing_story = self.repository.get_story_by_id(story_id)
-    if not existing_story:
-      raise ValueError(f"Story with id {story_id} not found.")
-    
-    existing_story.user_id = story_data.get('userId', existing_story.user_id)
-    existing_story.title = story_data.get('title', existing_story.title)
-    existing_story.summary = story_data.get('summary', existing_story.summary)
-    existing_story.created_at = story_data.get('createdAt', existing_story.created_at)
-    existing_story.updated_at = story_data.get('updatedAt', existing_story.updated_at)
-    existing_story.total_characters = story_data.get('totalCharacters', existing_story.total_characters)
-    existing_story.total_end = story_data.get('totalEnd', existing_story.total_end)
-    existing_story.total_pages = story_data.get('totalPages', existing_story.total_pages)
-    existing_story.total_open_node = story_data.get('totalOpenNode', existing_story.total_open_node)
-
-    return self.repository.update_story(existing_story)
   

@@ -114,7 +114,6 @@ class stories_repository:
   
     story_data = to_dict(s)
     story_data["userId"] = ObjectId(story_data["userId"])
-    
     try:
       result = self.collection.insert_one(story_data)
 
@@ -126,8 +125,7 @@ class stories_repository:
       
     except Exception as e:
       raise Exception(f"An error occurred while creating the story: {e}") from e
-    
-    
+     
   def update_story(self, story: Story) -> Story:
     """
     Update an existing story.
@@ -142,10 +140,18 @@ class stories_repository:
         ValueError: If no story is found with the specified identifier.
         Exception: If an error occurs while updating the story.
     """
+    if not story.user_id :
+      raise ValueError("Story user_id cannot be empty.")
+    if not story.title :
+      raise ValueError("Story title cannot be empty.")
+  
+    story_data = to_dict(story)
+    story_data.pop("id")
+    story_data.pop("userId")
     try:
       result = self.collection.update_one(
         {"_id": ObjectId(story.id)},
-        {"$set": to_dict(story)}
+        {"$set": story_data}
       )
       if result.modified_count == 0:
         raise Exception("Failed to update story.")

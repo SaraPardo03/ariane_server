@@ -101,7 +101,34 @@ class stories_controller(MethodView):
           return jsonify({"error": str(ve)}), 404
       except Exception as e:
           return jsonify({"error": str(e)}), 500
-          
+      
+    @stories.arguments(update_story)
+    @stories.response(200, story_response)
+    @jwt_required
+    def put(self, story_data:dict, story_id:str, user_id:str,):
+      """
+        Update a story by its identifier.
+
+        Args:
+            story_data (dict): The updated data for the story.
+            story_id (str): The identifier of the story to update.
+            user_id (str): The identifier of the user who owns the story.
+
+        Returns:
+            dict: A dictionary containing the updated story.
+        
+        Raises:
+            ValueError: If no story is found with the specified identifier or the provided data is invalid.
+            Exception: If an error occurs while updating the story.
+        """
+      try:
+        updated_story = stories_service.update_story(story_id, story_data)
+        return jsonify({"story": to_dict(updated_story)})
+      except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+      except Exception as e:
+        return jsonify({"error": str(e)}), 500
+      
     @stories.response(status_code=200)
     @jwt_required
     def delete(self, story_id:str, user_id:str,):
@@ -126,32 +153,5 @@ class stories_controller(MethodView):
         return jsonify({"message": "Story successfully deleted"}), 200
       except ValueError as ve:
         return jsonify({"error": str(ve)}), 404
-      except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
-    @stories.arguments(update_story)
-    @stories.response(200, story_response)
-    @jwt_required
-    def put(self, story_data:dict, story_id:str, user_id:str,):
-      """
-        Update a story by its identifier.
-
-        Args:
-            story_data (dict): The updated data for the story.
-            story_id (str): The identifier of the story to update.
-            user_id (str): The identifier of the user who owns the story.
-
-        Returns:
-            dict: A dictionary containing the updated story.
-        
-        Raises:
-            ValueError: If no story is found with the specified identifier or the provided data is invalid.
-            Exception: If an error occurs while updating the story.
-        """
-      try:
-        updated_story = stories_service.update_story(story_id, story_data)
-        return jsonify({"user": to_dict(updated_story)})
-      except ValueError as ve:
-        return jsonify({"error": str(ve)}), 400
       except Exception as e:
         return jsonify({"error": str(e)}), 500
