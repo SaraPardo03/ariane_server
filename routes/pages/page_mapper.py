@@ -1,45 +1,54 @@
-from .user import User
-from .dto.response.user_response import UserResponse
+from .page import Page
+from bson.objectid import ObjectId
+from datetime import datetime
 
-from firebase_admin.firestore import DocumentReference, DocumentSnapshot
+def to_entity(page_data: dict) -> Page:
+    """
+    Convert a dictionary representation of a page to a Page object.
 
-def toUserResponse(user: User) -> UserResponse:
-  return UserResponse().dump(user)
+    Args:
+        page_data (dict): The dictionary containing page data.
 
+    Returns:
+        Page: The Page object created from the provided data.
+    """
+    p = Page()
+    p.end = page_data.get("end", False)
+    p.first = page_data.get("first", False)
+    p.title = page_data.get("title")
+    p.text = page_data.get("text", "")
+    p.total_characters = page_data.get("totalCharacters", 0)
 
-def toDict(user: User) -> dict:
-  return {
-    "id": user.id,
-    "firstname": user.firstname,
-    "lastname": user.lastname,
-    "username": user.username,
-    "email": user.email,
-    "password": user.password,
-    "salt": user.salt,
-  }
+    if page_data.get("_id") and isinstance(page_data.get("_id"), ObjectId):
+      p.id = str(page_data.get("_id"))
 
-def toEntity(user_data: dict | DocumentReference | DocumentSnapshot) -> User:
-  u = User()
-  if isinstance(user_data, DocumentReference):
-    user_data = user_data.get()
-  if isinstance(user_data, DocumentSnapshot):
-    u.id = user_data.id
-    user_data = user_data.to_dict()
-    u.salt = user_data["salt"]
-  
-  u.firstname = user_data["firstname"]
-  u.lastname = user_data["lastname"]
-  u.username = user_data["username"]
-  u.email = user_data["email"]
-  u.password = user_data["password"]
-  return u
+    if page_data.get("storyId") and isinstance(page_data.get("storyId"), ObjectId):
+      p.story_id = str(page_data.get("storyId"))
+    if page_data.get("storyId") and type(page_data.get("storyId")) == str:
+      p.story_id = page_data.get("storyId") 
+    
+    return p
 
-def toUpdateEntity(user_data: dict) -> User:
-  u = User
-  u.id = user_data.get("id", "")
-  u.firstname = user_data.get("firstname", "")
-  u.lastname = user_data.get("lastname", "")
-  u.username = user_data.get("username", "")
-  u.email = user_data.get("email", "")
-  u.password = user_data.get("password", "") 
-  return u
+def to_dict(p: Page) -> dict:
+    """
+    Convert a Page object to a dictionary representation.
+
+    Args:
+        p (Page): The Page object to convert.
+
+    Returns:
+        dict: A dictionary containing the attributes of the page object.
+    """
+    page_dict = {
+      "end": p.end,
+      "first": p.first,
+      "title": p.title,
+      "text": p.text,
+      "totalCharacters": p.total_characters,
+    }
+
+    if p.id:
+      page_dict["id"] = str(p.id)
+    if p.story_id:
+      page_dict["storyId"] = str(p.story_id)
+    return page_dict

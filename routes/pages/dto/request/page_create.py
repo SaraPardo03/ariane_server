@@ -2,8 +2,10 @@ from marshmallow import Schema, fields
 
 # Define a schema for creating a page 
 class create_page(Schema):
-  title = fields.String()  # Title of the page as a string
-  text = fields.String()  # Text content of the page as a string
-  first = fields.Boolean()  # Boolean flag indicating if this is the first page
-  end = fields.Boolean()  # Boolean flag indicating if this is an end page
-  totalCharacters = fields.Integer()  # Total number of characters in the page (text only)
+  storyId = fields.String(required=True)
+  title = fields.String(required=True)
+  text = fields.String()
+  end = fields.Boolean()
+  first = fields.Boolean()
+  totalCharacters = fields.Integer()
+

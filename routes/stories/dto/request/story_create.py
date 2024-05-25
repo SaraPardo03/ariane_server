@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 
-# Define a schema for creating a page 
+# Define a schema for creating a story 
 class create_story(Schema):
   userId = fields.String(required=True)
   title = fields.String(required=True)

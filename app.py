@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 from routes.users.users_controller import users, sign_in, sign_up
 from routes.stories.stories_controller import stories
+from routes.pages.pages_controller import pages
 
 server = Flask(__name__)
 CORS(server, resources={r"/*": {"origins": "http://localhost:5173"}})
@@ -23,10 +24,11 @@ server.config.from_object(APIConfig)
 
 api = Api(server)
 
-api.register_blueprint(stories)
 api.register_blueprint(users)
 api.register_blueprint(sign_in)
 api.register_blueprint(sign_up)
+api.register_blueprint(stories)
+api.register_blueprint(pages)
 
 @server.route("/")
 def index():

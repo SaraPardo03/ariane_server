@@ -2,11 +2,15 @@ from marshmallow import Schema, fields
 
 # Define a schema for the reponse
 class page_response(Schema):
-  title = fields.String()  # Title of the page as a string
-  text = fields.String()  # Text content of the page as a string
-  first = fields.Boolean()  # Boolean flag indicating if this is the first page
-  end = fields.Boolean()  # Boolean flag indicating if this is an end page
-  totalCharacters = fields.Integer()  # Total number of characters in the page (text only)
+  id = fields.String(required=True)
+  storyId = fields.String(required=True)
+  title = fields.String(required=True)
+  text = fields.String()
+  end = fields.Boolean()
+  first = fields.Boolean()
+  totalCharacters = fields.Integer()
 
-class page_full_response(page_response):
-  id = fields.String()
+
+
+class pages_response(Schema):
+  pages = fields.List(fields.Nested(page_response))
