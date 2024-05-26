@@ -173,7 +173,7 @@ class pages_repository:
         {"$set": page_data}
       )
       if result.modified_count == 0:
-        raise Exception("Failed to update story.")
+        raise Exception("Failed to update page.")
       
       print("update repo", result)
       return page

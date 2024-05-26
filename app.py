@@ -6,9 +6,17 @@ from flask_cors import CORS
 from routes.users.users_controller import users, sign_in, sign_up
 from routes.stories.stories_controller import stories
 from routes.pages.pages_controller import pages
+from routes.choices.choices_controller import choices
+
 
 server = Flask(__name__)
-CORS(server, resources={r"/*": {"origins": "http://localhost:5173"}})
+#CORS(server, resources={r"/*": {"origins": "http://localhost:5173"}})
+# Configuration de CORS pour plusieurs origines
+cors = CORS(server, resources={
+    r"/*": {
+        "origins": ["http://localhost:5173", "http://192.168.1.109:5173"]
+    }
+})
 
 class APIConfig:
   API_TITLE = "Ariane Library API V1"
@@ -29,6 +37,7 @@ api.register_blueprint(sign_in)
 api.register_blueprint(sign_up)
 api.register_blueprint(stories)
 api.register_blueprint(pages)
+api.register_blueprint(choices)
 
 @server.route("/")
 def index():

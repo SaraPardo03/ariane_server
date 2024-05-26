@@ -19,7 +19,7 @@ def to_entity(choice_data: dict) -> Choice:
 
     if choice_data.get("pageId") and isinstance(choice_data.get("pageId"), ObjectId):
       c.page_id = str(choice_data.get("pageId"))
-    if choice_data.get("pageId") and type(choice_data.get("PageId")) == str:
+    if choice_data.get("pageId") and type(choice_data.get("pageId")) == str:
       c.page_id = choice_data.get("pageId")
 
     if choice_data.get("sendToPageId") and isinstance(choice_data.get("sendToPageId"), ObjectId):

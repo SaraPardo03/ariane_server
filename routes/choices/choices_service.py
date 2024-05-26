@@ -1,7 +1,7 @@
 from .choices_repository import choices_repository
 from .choice import Choice
 
-class choice_service:
+class choices_service:
   """
   Service for managing choice.
 
@@ -35,7 +35,7 @@ class choice_service:
     except Exception as e:
       raise Exception(f"Failed to fetch choices: {e}") from e
     
-  def delete_all(self, pages_id:str) -> int:
+  def delete_all(self, page_id:str) -> int:
     """
     Delete all choices associated with a pages_id.
 
@@ -111,7 +111,7 @@ class choice_service:
     if not existing_choice:
       raise ValueError(f"Choice with id {choice_id} not found.")
     
-    existing_choice.page_id = choice_data.get('pageId', existing_choice.story_id)
+    existing_choice.page_id = choice_data.get('pageId', existing_choice.page_id)
     existing_choice.send_to_page_id = choice_data.get('sendToPageId', existing_choice.send_to_page_id)
     existing_choice.title = choice_data.get('title', existing_choice.title)
 

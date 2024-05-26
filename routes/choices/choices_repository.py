@@ -14,7 +14,7 @@ from .choice_mapper import to_entity, to_dict
 client = MongoClient(mongodb_uri, server_api=ServerApi('1'))
 db = client["ariane"]
 
-class pages_repository:
+class choices_repository:
   """
   Repository for managing choice.
 

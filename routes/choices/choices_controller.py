@@ -16,7 +16,7 @@ choices_service = choices_service()
 
 choices = Blueprint("choices", "choices", url_prefix="/choices", description="choices routes")
 
-@choices.route("/<pages_id>")
+@choices.route("/<page_id>")
 class choice_controller(MethodView):
   """
     Controller class for managing choices.
@@ -40,6 +40,7 @@ class choice_controller(MethodView):
     """
     try:
       choices = choices_service.get_all(page_id)
+      
       choices = [to_dict(choice) for choice in choices]
       return {"choices": choices}
     except Exception as e:
@@ -114,7 +115,7 @@ class choice_controller(MethodView):
             Exception: If an error occurs while retrieving the choice.
       """
       try:
-          choice = choices_service.get_choie_by_id(choice_id)
+          choice = choices_service.get_choice_by_id(choice_id)
           return jsonify({"choice": to_dict(choice)})
       except ValueError as ve:
           return jsonify({"error": str(ve)}), 404

@@ -10,4 +10,4 @@ class choice_response(Schema):
 
 
 class choices_response(Schema):
-  pages = fields.List(fields.Nested(choice_response))
+  choices = fields.List(fields.Nested(choice_response))

@@ -25,7 +25,12 @@ def to_entity(page_data: dict) -> Page:
     if page_data.get("storyId") and isinstance(page_data.get("storyId"), ObjectId):
       p.story_id = str(page_data.get("storyId"))
     if page_data.get("storyId") and type(page_data.get("storyId")) == str:
-      p.story_id = page_data.get("storyId") 
+      p.story_id = page_data.get("storyId")
+
+    if page_data.get("previousPageId") and isinstance(page_data.get("previousPageId"), ObjectId):
+      p.previous_page_id = str(page_data.get("previousPageId"))
+    if page_data.get("previousPageId") and type(page_data.get("previousPageId")) == str:
+      p.previous_page_id  = page_data.get("previousPageId") 
     
     return p
 
@@ -49,6 +54,10 @@ def to_dict(p: Page) -> dict:
 
     if p.id:
       page_dict["id"] = str(p.id)
+
     if p.story_id:
       page_dict["storyId"] = str(p.story_id)
+
+    if p.previous_page_id:
+      page_dict["previousPageId"] = str(p.previous_page_id)
     return page_dict

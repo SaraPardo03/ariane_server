@@ -5,6 +5,7 @@ class page_response(Schema):
   id = fields.String(required=True)
   storyId = fields.String(required=True)
   title = fields.String(required=True)
+  previousPageId = fields.String()
   text = fields.String()
   end = fields.Boolean()
   first = fields.Boolean()
