@@ -172,3 +172,39 @@ class choice_controller(MethodView):
         return jsonify({"error": str(ve)}), 404
       except Exception as e:
         return jsonify({"error": str(e)}), 500
+      
+choice_send_to = Blueprint("choice_send_to", "choice_send_to", url_prefix="/choice_send_to", description="choice_send_to routes")
+
+@choice_send_to.route("/<send_to_page_id>")
+class choice_send_to_controller(MethodView):
+  """
+    Controller class for managing choices.
+
+    This controller provides endpoints for retrieving choice
+  """
+  @choices.response(200, choice_response)
+  @jwt_required
+  def get(self, send_to_page_id:str):
+    """
+    Retrieve a choice by its identifier of the page to by send to.
+
+    Args:
+        send_to_page_id_id (str): The identifier of the page to by send.
+
+    Returns:
+          dict: A dictionary containing the retrieved choice.
+
+    Raises:
+        ValueError: If no choice is found with the specified identifier.
+        Exception: If an error occurs while retrieving the choice.
+    """
+    try:
+        choice = choices_service.get_choice_by_send_to_page_id(send_to_page_id)
+        print("controller", choice)
+        return jsonify({"choice": to_dict(choice)})
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+  

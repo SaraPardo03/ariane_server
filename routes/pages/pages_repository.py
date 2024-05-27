@@ -48,6 +48,57 @@ class pages_repository:
       return [to_entity(page) for page in pages_collection]
     except Exception as e:
       raise Exception(f"Failed to get pages: {e}") from e
+    
+  def get_pages_with_leading_choice_title(self, story_id:str) -> list[dict]:
+    """
+    Retrieve all pages with the title of the choice that leads to them.
+
+    Args:
+        story_id (str): The identifier of the story whose pages are to be retrieved.
+
+    Returns:
+        list[dict]: A list of dictionaries containing page information along with the leading choice title.
+    
+    Raises:
+        Exception: If an error occurs while retrieving the pages.
+    """
+    try:
+      pipeline = [
+        {"$match": {"storyId": ObjectId(story_id)}},
+        {
+          "$lookup": {
+            "from": "choices",
+            "localField": "_id",
+            "foreignField": "sendToPageId",
+            "as": "leadingChoice"
+          }
+        },
+        {
+          "$unwind": {
+            "path": "$leadingChoice",
+            "preserveNullAndEmptyArrays": True
+          }
+        },
+        {
+          "$project": {
+            "_id": 1,
+            "storyId": 1,
+            "end": { "$ifNull": ["$end", False] },
+            "first": { "$ifNull": ["$first", False] }, 
+            "text": 1,
+            "title": 1,
+            "previousPageId": 1,
+            "totalCharacters": 1,
+            "choiceTitle": "$leadingChoice.title"
+          }
+        }
+      ]
+        
+      pages_with_choices = list(self.collection.aggregate(pipeline))
+      return [to_entity(page) for page in pages_with_choices]
+      return pages_with_choices
+    except Exception as e:
+      raise Exception(f"Failed to get pages with leading choice titles: {e}") from e
   
   def delete_all(self, story_id:str) ->int:
     """

@@ -6,7 +6,7 @@ from flask_cors import CORS
 from routes.users.users_controller import users, sign_in, sign_up
 from routes.stories.stories_controller import stories
 from routes.pages.pages_controller import pages
-from routes.choices.choices_controller import choices
+from routes.choices.choices_controller import choices, choice_send_to
 
 
 server = Flask(__name__)
@@ -38,6 +38,7 @@ api.register_blueprint(sign_up)
 api.register_blueprint(stories)
 api.register_blueprint(pages)
 api.register_blueprint(choices)
+api.register_blueprint(choice_send_to)
 
 @server.route("/")
 def index():

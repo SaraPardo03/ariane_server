@@ -39,7 +39,7 @@ class pages_controller(MethodView):
           Exception: If an error occurs while retrieving the pages.
     """
     try:
-      pages = pages_service.get_all(story_id)
+      pages = pages_service.get_pages_with_leading_choice_title(story_id)
       pages = [to_dict(page) for page in pages]
       return {"pages": pages}
     except Exception as e:

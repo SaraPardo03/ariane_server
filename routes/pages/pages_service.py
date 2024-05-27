@@ -35,6 +35,24 @@ class pages_service:
     except Exception as e:
       raise Exception(f"Failed to fetch pages: {e}") from e
     
+  def get_pages_with_leading_choice_title(self, story_id:str) -> list[dict]:
+    """
+    Retrieve all pages with the title of the choice that leads to them.
+
+    Args:
+        story_id (str): The identifier of the story whose pages are to be retrieved.
+
+    Returns:
+        list[dict]: A list of dictionaries containing page information along with the leading choice title.
+    
+    Raises:
+        Exception: If an error occurs while retrieving the pages.
+    """
+    try:
+      return self.repository.get_pages_with_leading_choice_title(story_id)
+    except Exception as e:
+      raise Exception(f"Failed to fetch pages: {e}") from e
+      
   def delete_all(self, story_id:str) -> int:
     """
     Delete all pages associated with a story_id.

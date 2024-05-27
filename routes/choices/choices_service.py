@@ -93,6 +93,25 @@ class choices_service:
       raise ValueError(f"Choice with id {choice_id} not found.")
     return choice
   
+  def get_choice_by_send_to_page_id(self, send_to_page_id:str) -> Choice:
+    """
+    Retrieve a choice by its identifier of the page to by send to.
+
+    Args:
+        send_to_page_id_id (str): The identifier of the page to by send.
+
+    Returns:
+        Choice: The Choice object corresponding to the specified identifier of the page to be send to.
+    
+    Raises:
+        ValueError: If no choice is found with the specified identifier.
+        Exception: If an error occurs while retrieving the choice.
+    """
+    choice = self.repository.get_choice_by_send_to_page_id(send_to_page_id)
+    if not choice:
+      raise ValueError(f"Choice with send_to_page_id {send_to_page_id} not found.")
+    return choice
+  
   def update_choice(self, choice_id: str, choice_data: dict) -> Choice:
     """
     Update an existing choice.

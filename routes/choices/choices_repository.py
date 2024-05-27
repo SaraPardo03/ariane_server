@@ -89,7 +89,30 @@ class choices_repository:
       return to_entity(choice)
     except Exception as e:
       raise Exception(f"An error occurred while geting choice whit the id {choice_id}: {e}") from e
-  
+
+  def get_choice_by_send_to_page_id(self, send_to_page_id:str) ->Choice:
+    """
+    Retrieve a choice by its identifier of the page to by send to.
+
+    Args:
+        send_to_page_id_id (str): The identifier of the page to by send.
+
+    Returns:
+        Choice: The Choice object corresponding to the specified identifier of the page to be send to.
+    
+    Raises:
+        ValueError: If no choice is found with the specified identifier.
+        Exception: If an error occurs while retrieving the choice.
+    """
+    try:
+      choice = self.collection.find_one({"sendToPageId": ObjectId(send_to_page_id)})
+      if not choice:
+        raise ValueError(f"choice not found.")
+      return to_entity(choice)
+    except Exception as e:
+      raise Exception(f"An error occurred while geting choice whit the send_to_page_id {send_to_page_id}: {e}") from e
+
+
   def delete_choice(self, choice_id:str) ->bool:
     """
     Delete a choice by its identifier.

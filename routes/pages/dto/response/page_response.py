@@ -10,6 +10,7 @@ class page_response(Schema):
   end = fields.Boolean()
   first = fields.Boolean()
   totalCharacters = fields.Integer()
+  choiceTitle = fields.String(allow_none=True)
 
 
 
