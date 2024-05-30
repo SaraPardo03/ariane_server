@@ -1,5 +1,6 @@
 from .pages_repository import pages_repository
 from .page import Page
+from fpdf import FPDF
 
 class pages_service:
   """
@@ -32,6 +33,24 @@ class pages_service:
     """
     try:
       return self.repository.get_all(story_id)
+    except Exception as e:
+      raise Exception(f"Failed to fetch pages: {e}") from e
+    
+  def get_pages_with_choices(self, story_id:str) -> list[dict]:
+    """
+    Retrieve all pages with the title of the choice that leads to them.
+
+    Args:
+        story_id (str): The identifier of the story whose pages are to be retrieved.
+
+    Returns:
+        list[dict]: A list of dictionaries containing page information along with the leading choice title.
+    
+    Raises:
+        Exception: If an error occurs while retrieving the pages.
+    """
+    try:
+      return self.repository.get_pages_with_choices(story_id)
     except Exception as e:
       raise Exception(f"Failed to fetch pages: {e}") from e
     
@@ -156,4 +175,4 @@ class pages_service:
         raise ValueError(f"Page with id {page_id} not found.")
     return self.repository.delete_page(page_id)
   
-  
+

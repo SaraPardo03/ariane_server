@@ -1,7 +1,11 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+
 from .page import Page
 from bson.objectid import ObjectId
-from datetime import datetime
-
+from routes.choices.choice_mapper import to_entity as choice_to_entity
+from routes.choices.choice_mapper import to_dict as choice_to_dict
 def to_entity(page_data: dict) -> Page:
     """
     Convert a dictionary representation of a page to a Page object.
@@ -17,8 +21,11 @@ def to_entity(page_data: dict) -> Page:
     p.first = page_data.get("first", False)
     p.title = page_data.get("title")
     p.text = page_data.get("text", "")
+    p.section = page_data.get("section", None)
     p.total_characters = page_data.get("totalCharacters", 0)
+    p.choices=[choice_to_entity(choice) for choice in page_data.get('choices', [])]
     p.choice_title = page_data.get("choiceTitle", "")
+    
 
     if page_data.get("_id") and isinstance(page_data.get("_id"), ObjectId):
       p.id = str(page_data.get("_id"))
@@ -51,7 +58,9 @@ def to_dict(p: Page) -> dict:
       "first": p.first,
       "title": p.title,
       "text": p.text,
+      "section": p.section,
       "totalCharacters": p.total_characters,
+      "choices" :[choice_to_dict(choice) for choice in p.choices],
       "choiceTitle" :p.choice_title
     }
 

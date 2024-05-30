@@ -10,7 +10,7 @@ from routes.choices.choices_controller import choices, choice_send_to
 
 
 server = Flask(__name__)
-#CORS(server, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(server, resources={r"/*": {"origins": "http://localhost:5173"}})
 # Configuration de CORS pour plusieurs origines
 cors = CORS(server, resources={
     r"/*": {

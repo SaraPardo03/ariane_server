@@ -1,10 +1,17 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from flask.views import MethodView
-from flask import jsonify
+from flask import jsonify, send_file
 from flask_smorest import Blueprint
+from fpdf import FPDF
+import io
 
 from utils.jwt_decorator import jwt_required
 
 from .pages_service import pages_service
+from .pages_pdf import pages_pdf
+from routes.stories.stories_service import stories_service
 
 from .dto.request.page_create import create_page
 from .dto.request.page_update import update_page
@@ -13,6 +20,7 @@ from .dto.response.page_response import page_response, pages_response
 from .page_mapper import to_dict, to_entity
 
 pages_service = pages_service()
+stories_service = stories_service()
 
 pages = Blueprint("pages", "pages", url_prefix="/pages", description="pages routes")
 
@@ -44,7 +52,7 @@ class pages_controller(MethodView):
       return {"pages": pages}
     except Exception as e:
       return jsonify({"error": str(e)}), 500
-  
+    
   @pages.response(status_code=200)
   @jwt_required
   def delete(self, story_id:str):
@@ -92,6 +100,48 @@ class pages_controller(MethodView):
       return jsonify({"error": str(e)}), 500
   
     return jsonify({"page": to_dict(page)})
+
+  @pages.route("/generate_pdf/<story_id>", methods=['POST'])
+  @jwt_required
+  def generate_pdf(story_id: str):
+      try:
+        pages = pages_service.get_pages_with_choices(story_id)
+
+        if pages:
+          story= stories_service.get_story_by_id(story_id)
+          first_page = [page for page in pages if page.first == True]
+
+          def get_title_len(page):
+            return len(page.choice_title)
+
+          pages.sort(key=get_title_len)
+          for index, page in enumerate(pages):
+            page.section = index
+          
+          pdf = pages_pdf(orientation = 'P', unit = 'mm', format='A5')
+          pdf.set_title(story.title)
+          pdf.set_author('Artist Unknown')
+          pdf.set_subject(story.summary)
+          
+          pdf.draw_story_title()
+          
+          pdf.draw_page(pages, first_page[0])
+          pdf.draw_pages(pages)
+
+          pdf.output('tuto1.pdf', 'F')
+          stream = io.BytesIO(pdf.output(dest='S').encode('latin-1'))
+
+          return send_file(
+              stream,
+              mimetype='application/pdf',
+              download_name='example.pdf',
+              as_attachment=False
+          )
+        else:
+          return jsonify({"Error": "No pages found for creating the pdf"}), 404
+      
+      except Exception as e:
+          return jsonify({"error": str(e)}), 500
 
   @pages.route("/page/<page_id>")
   class page_controller(MethodView):

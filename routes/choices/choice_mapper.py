@@ -51,4 +51,5 @@ def to_dict(c: Choice) -> dict:
 
     if c.send_to_page_id:
       choice_dict["sendToPageId"] = str(c.send_to_page_id)
+
     return choice_dict
