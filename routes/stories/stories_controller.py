@@ -1,6 +1,10 @@
+import os
+import base64
+
 from flask.views import MethodView
 from flask import jsonify
 from flask_smorest import Blueprint
+
 
 from utils.jwt_decorator import jwt_required
 
@@ -121,6 +125,19 @@ class stories_controller(MethodView):
             ValueError: If no story is found with the specified identifier or the provided data is invalid.
             Exception: If an error occurs while updating the story.
         """
+      image_base64 = story_data.get('cover')
+
+      # Decode the cover image and save it to the server
+      image_url = None
+      if image_base64:
+        image_data = base64.b64decode(image_base64.split(',')[1])
+        image_filename = f"{story_id}.png"
+        image_path = os.path.join('static', 'images', image_filename)
+        with open(image_path, 'wb') as f:
+          f.write(image_data)
+        image_url = f"/static/images/{image_filename}"
+      
+      story_data['cover'] = image_url
       try:
         updated_story = stories_service.update_story(story_id, story_data)
         return jsonify({"story": to_dict(updated_story)})

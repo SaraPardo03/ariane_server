@@ -82,7 +82,6 @@ class stories_service:
     Raises:
       ValueError: If no story is found with the specified identifier.
     """
-    print("update", story_id, story_data.get("id"))
     existing_story = self.repository.get_story_by_id(story_id)
     if not existing_story:
       raise ValueError(f"Story with id {story_id} not found.")
@@ -90,6 +89,7 @@ class stories_service:
     existing_story.user_id = story_data.get('userId', existing_story.user_id)
     existing_story.title = story_data.get('title', existing_story.title)
     existing_story.summary = story_data.get('summary', existing_story.summary)
+    existing_story.cover = story_data.get('cover', existing_story.cover)
     existing_story.created_at = story_data.get('createdAt', existing_story.created_at)
     existing_story.updated_at = story_data.get('updatedAt', existing_story.updated_at)
     existing_story.total_characters = story_data.get('totalCharacters', existing_story.total_characters)

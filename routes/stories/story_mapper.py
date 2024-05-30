@@ -21,6 +21,7 @@ def to_entity(story_data: dict) -> Story:
     s.total_end = story_data.get("totalEnd", 0)
     s.total_pages = story_data.get("totalPages", 0)
     s.total_open_node = story_data.get("totalOpenNode", 0)
+    s.cover = story_data.get("cover", "")
 
     if story_data.get("_id") and isinstance(story_data.get("_id"), ObjectId):
       s.id = str(story_data.get("_id"))
@@ -51,6 +52,7 @@ def to_dict(s: Story) -> dict:
       "totalEnd":s.total_end,
       "totalPage": s.total_pages,
       "totalOpenNode": s.total_open_node,
+      "cover":s.cover,
     }
 
     if s.id:

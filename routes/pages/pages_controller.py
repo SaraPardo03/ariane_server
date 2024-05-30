@@ -109,6 +109,7 @@ class pages_controller(MethodView):
 
         if pages:
           story= stories_service.get_story_by_id(story_id)
+          print("story", story.title, story.cover)
           first_page = [page for page in pages if page.first == True]
 
           def get_title_len(page):
@@ -123,7 +124,7 @@ class pages_controller(MethodView):
           pdf.set_author('Artist Unknown')
           pdf.set_subject(story.summary)
           
-          pdf.draw_story_title()
+          pdf.draw_story_title(story)
           
           pdf.draw_page(pages, first_page[0])
           pdf.draw_pages(pages)

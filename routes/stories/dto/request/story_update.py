@@ -4,6 +4,7 @@ from marshmallow import Schema, fields
 class update_story(Schema):
   title = fields.String()
   summary = fields.String()
+  cover = fields.String(allow_none=True)
   updatedAt = fields.String()
   totalCharacters = fields.Integer()
   totalEnd = fields.Integer()

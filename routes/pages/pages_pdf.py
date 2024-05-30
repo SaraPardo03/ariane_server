@@ -1,5 +1,7 @@
 from fpdf import FPDF
 
+base_url = "http://127.0.0.1:8080/"
+
 class pages_pdf(FPDF):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -21,7 +23,13 @@ class pages_pdf(FPDF):
     # Print centered page number
     #self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'R')
   
-  def draw_story_title(self):
+  def draw_story_title(self, story):
+    self.add_page()
+
+    if story.cover:
+      image_url = f"{base_url}{story.cover}"
+      self.image(image_url, x=0, y=0, w=self.w, h=self.h)
+      
     self.add_page()
     #Author
     self.ln(24)
@@ -121,6 +129,6 @@ class pages_pdf(FPDF):
     section.set_author('Artist Unknown')
     section.set_subject(story.summary)
     
-    section.draw_story_title()
+    section.draw_story_title(story)
     section.draw_page(pages, first_page)
     section.draw_pages(pages)
