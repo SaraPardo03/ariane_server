@@ -7,3 +7,4 @@ class update_page(Schema):
   end = fields.Boolean()
   first = fields.Boolean()
   totalCharacters = fields.Integer()
+  image = fields.String()

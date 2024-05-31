@@ -97,6 +97,7 @@ class pages_repository:
             "title": 1,
             "previousPageId": 1,
             "totalCharacters": 1,
+            "image":1,
             "choiceTitle": "$leadingChoice.title",
             "choices": {
               "$map": {
@@ -158,6 +159,7 @@ class pages_repository:
             "title": 1,
             "previousPageId": 1,
             "totalCharacters": 1,
+            "image": 1, 
             "choiceTitle": "$leadingChoice.title"
           }
         }

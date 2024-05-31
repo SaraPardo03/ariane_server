@@ -1,5 +1,7 @@
 import os
 import sys
+import base64
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 from flask.views import MethodView
 from flask import jsonify, send_file
@@ -190,6 +192,21 @@ class pages_controller(MethodView):
             ValueError: If no page is found with the specified identifier or the provided data is invalid.
             Exception: If an error occurs while updating the page.
         """
+      image_base64 = page_data.get('image')
+
+      # Decode the cover image and save it to the server
+      image_url = None
+      if image_base64:
+        image_data = base64.b64decode(image_base64.split(',')[1])
+        image_filename = f"{page_id}.png"
+        image_path = os.path.join('static', 'images', 'pages', image_filename)
+        with open(image_path, 'wb') as f:
+          f.write(image_data)
+        image_url = f"/static/images/pages/{image_filename}"
+      
+      page_data['image'] = image_url
+
+      print("page", page_data['image'])
       try:
         updated_page = pages_service.update_page(page_id, page_data)
         return jsonify({"page": to_dict(updated_page)})

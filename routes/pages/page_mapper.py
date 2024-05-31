@@ -25,6 +25,7 @@ def to_entity(page_data: dict) -> Page:
     p.total_characters = page_data.get("totalCharacters", 0)
     p.choices=[choice_to_entity(choice) for choice in page_data.get('choices', [])]
     p.choice_title = page_data.get("choiceTitle", "")
+    p.image = page_data.get("image", "")
     
 
     if page_data.get("_id") and isinstance(page_data.get("_id"), ObjectId):
@@ -61,8 +62,11 @@ def to_dict(p: Page) -> dict:
       "section": p.section,
       "totalCharacters": p.total_characters,
       "choices" :[choice_to_dict(choice) for choice in p.choices],
-      "choiceTitle" :p.choice_title
+      "choiceTitle" :p.choice_title,
+      "image": p.image,
     }
+    
+    print("page_dict", page_dict['image'])
 
     if p.id:
       page_dict["id"] = str(p.id)

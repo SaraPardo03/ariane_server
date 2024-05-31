@@ -154,6 +154,7 @@ class pages_service:
     existing_page.first = page_data.get('first', existing_page.first)
     existing_page.end = page_data.get('end', existing_page.end)
     existing_page.total_characters = page_data.get('totalCharacters', existing_page.total_characters)
+    existing_page.image = page_data.get('image', existing_page.image)
 
     return self.repository.update_page(existing_page)
   
