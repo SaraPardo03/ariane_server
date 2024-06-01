@@ -1,10 +1,12 @@
 import os
 import sys
 import base64
-
+# Add the parent directory to the system path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+
+
 from flask.views import MethodView
-from flask import jsonify, send_file
+from flask import jsonify, send_file, request
 from flask_smorest import Blueprint
 from fpdf import FPDF
 import io
@@ -21,9 +23,12 @@ from .dto.response.page_response import page_response, pages_response
 
 from .page_mapper import to_dict, to_entity
 
+
+# Initialize services
 pages_service = pages_service()
 stories_service = stories_service()
 
+# Create a blueprint for pages routes
 pages = Blueprint("pages", "pages", url_prefix="/pages", description="pages routes")
 
 @pages.route("/<story_id>")
@@ -31,8 +36,8 @@ class pages_controller(MethodView):
   """
     Controller class for managing pages.
 
-    This controller provides endpoints for retrieving, creating, updating, and deleting pages.
-  """
+    This controller provides endpoints for retrieving, creating, updating and deleting pages.
+    """
   @pages.response(200, pages_response)
   @jwt_required
   def get(self, story_id:str):
@@ -47,7 +52,7 @@ class pages_controller(MethodView):
       
       Raises:
           Exception: If an error occurs while retrieving the pages.
-    """
+      """
     try:
       pages = pages_service.get_pages_with_leading_choice_title(story_id)
       pages = [to_dict(page) for page in pages]
@@ -106,17 +111,30 @@ class pages_controller(MethodView):
   @pages.route("/generate_pdf/<story_id>", methods=['POST'])
   @jwt_required
   def generate_pdf(story_id: str):
+      """
+        Generate a PDF for the given story_id.
+
+        Args:
+            story_id (str): The identifier of the story for which the PDF is generated.
+
+        Returns:
+            Response: A response containing the generated PDF.
+        
+        Raises:
+            Exception: If an error occurs while generating the PDF.
+      """
       try:
+        # Retrieve options from the request body
+        options = request.get_json()
         pages = pages_service.get_pages_with_choices(story_id)
 
         if pages:
           story= stories_service.get_story_by_id(story_id)
-          print("story", story.title, story.cover)
           first_page = [page for page in pages if page.first == True]
 
+          # Sort pages by the length of the choice title (random)
           def get_title_len(page):
             return len(page.choice_title)
-
           pages.sort(key=get_title_len)
           for index, page in enumerate(pages):
             page.section = index
@@ -125,15 +143,30 @@ class pages_controller(MethodView):
           pdf.set_title(story.title)
           pdf.set_author('Artist Unknown')
           pdf.set_subject(story.summary)
-          
-          pdf.draw_story_title(story)
+
+          pdf.add_page()
+          if options['cover'] != False:
+            pdf.draw_cover_title(story)
+
+          title_color = [255,0,0]
+          if options['titleColor'] and len(options['titleColor']) == 3:
+            title_color = options['titleColor']
+          pdf.draw_story_title(title_color)
+
+          pdf.draw_summary()
+
+          if options['adventurePage'] != False:
+            pdf.draw_aventure_pages()
           
           pdf.draw_page(pages, first_page[0])
+          
           pdf.draw_pages(pages)
+          
+          #demo
+          pdf.output('test.pdf', 'F')
 
-          pdf.output('tuto1.pdf', 'F')
+          ##send pdf
           stream = io.BytesIO(pdf.output(dest='S').encode('latin-1'))
-
           return send_file(
               stream,
               mimetype='application/pdf',
@@ -206,7 +239,6 @@ class pages_controller(MethodView):
       
       page_data['image'] = image_url
 
-      print("page", page_data['image'])
       try:
         updated_page = pages_service.update_page(page_id, page_data)
         return jsonify({"page": to_dict(updated_page)})
