@@ -68,6 +68,13 @@ class stories_service:
       raise ValueError(f"Story with id {story_id} not found.")
     return story
   
+  def get_full_story_by_id(self, story_id:str) -> Story:
+
+    story = self.repository.get_full_story_by_id(story_id)
+    if not story:
+      raise ValueError(f"Story with id {story_id} not found.")
+    return story
+  
   def update_story(self, story_id: str, story_data: dict) -> Story:
     """
     Update an existing story.

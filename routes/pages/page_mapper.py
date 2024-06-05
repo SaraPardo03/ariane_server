@@ -66,8 +66,6 @@ def to_dict(p: Page) -> dict:
       "image": p.image,
     }
     
-    print("page_dict", page_dict['image'])
-
     if p.id:
       page_dict["id"] = str(p.id)
 

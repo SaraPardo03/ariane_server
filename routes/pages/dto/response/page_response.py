@@ -15,9 +15,9 @@ class page_response(Schema):
   end = fields.Boolean()
   first = fields.Boolean()
   totalCharacters = fields.Integer()
-  choices = fields.List(fields.Nested(choice_response), allow_none=True)
-  choiceTitle = fields.String(allow_none=True)
   image = fields.String(allow_none=True)
+  choiceTitle = fields.String(allow_none=True)
+  choices = fields.List(fields.Nested(choice_response), allow_none=True)
 
 
 

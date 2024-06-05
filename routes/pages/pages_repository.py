@@ -167,7 +167,6 @@ class pages_repository:
         
       pages_with_choices = list(self.collection.aggregate(pipeline))
       return [to_entity(page) for page in pages_with_choices]
-      return pages_with_choices
     except Exception as e:
       raise Exception(f"Failed to get pages with leading choice titles: {e}") from e
   
@@ -255,6 +254,12 @@ class pages_repository:
   
     page_data = to_dict(p)
     page_data["storyId"] = ObjectId(page_data["storyId"])
+    if not page_data["first"]:
+      page_data["previousPageId"] = ObjectId(page_data["previousPageId"])
+    page_data.pop("id", None)
+    page_data.pop("choices", None)
+    page_data.pop("choiceTitle", None)
+    page_data.pop("section", None)
     try:
       result = self.collection.insert_one(page_data)
 
@@ -287,8 +292,12 @@ class pages_repository:
       raise ValueError("Page title cannot be empty.")
   
     page_data = to_dict(page)
-    page_data.pop("id")
-    page_data.pop("storyId")
+    page_data.pop("id", None)
+    page_data.pop("storyId", None)
+    page_data.pop("previousPageId", None)
+    page_data.pop("choices", None)
+    page_data.pop("choiceTitle", None)
+    page_data.pop("section", None)
     try:
       result = self.collection.update_one(
         {"_id": ObjectId(page.id)},

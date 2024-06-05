@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath
 from flask.views import MethodView
 from flask import jsonify, send_file, request
 from flask_smorest import Blueprint
+
 from fpdf import FPDF
 import io
 

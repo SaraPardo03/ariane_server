@@ -1,6 +1,12 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+
 from .story import Story
 from bson.objectid import ObjectId
-from datetime import datetime
+
+from routes.pages.page_mapper import to_entity as page_to_entity
+from routes.pages.page_mapper import to_dict as page_to_dict
 
 def to_entity(story_data: dict) -> Story:
     """
@@ -22,6 +28,7 @@ def to_entity(story_data: dict) -> Story:
     s.total_pages = story_data.get("totalPages", 0)
     s.total_open_node = story_data.get("totalOpenNode", 0)
     s.cover = story_data.get("cover", "")
+    s.pages=[page_to_entity(page) for page in story_data.get('pages', [])]
 
     if story_data.get("_id") and isinstance(story_data.get("_id"), ObjectId):
       s.id = str(story_data.get("_id"))
@@ -53,6 +60,7 @@ def to_dict(s: Story) -> dict:
       "totalPage": s.total_pages,
       "totalOpenNode": s.total_open_node,
       "cover":s.cover,
+      "pages" :[page_to_dict(page) for page in s.pages],
     }
 
     if s.id:

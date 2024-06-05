@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields
 
+from routes.pages.dto.response.page_response import page_response
 # Define a schema for the reponse
 class story_response(Schema):
   id = fields.String(required=True)
@@ -13,6 +14,7 @@ class story_response(Schema):
   totalEnd = fields.Integer()
   totalPages = fields.Integer()
   totalOpenNode = fields.Integer()
+  pages = fields.List(fields.Nested(page_response), allow_none=True)
 
 class stories_response(Schema):
   stories = fields.List(fields.Nested(story_response))

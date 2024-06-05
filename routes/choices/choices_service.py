@@ -67,6 +67,7 @@ class choices_service:
       ValueError: If any of the required values to create the choice is missing.
       Exception: If an error occurs while creating the choice.
     """
+    
     try:
       return self.repository.create_choice(c)
     except ValueError as ve:

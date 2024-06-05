@@ -71,6 +71,91 @@ class stories_repository:
     except Exception as e:
       raise Exception(f"An error occurred while geting story whit the id {story_id}: {e}") from e
   
+
+  def get_full_story_by_id(self, story_id: str) -> Story:
+    try:
+      story_id = ObjectId(story_id)
+      
+      pipeline = [
+        {"$match": {"_id": story_id}},
+        {"$lookup": {
+          "from": "pages",
+          "localField": "_id",
+          "foreignField": "storyId",
+          "as": "pages"
+        }},
+        {"$unwind": {"path": "$pages", "preserveNullAndEmptyArrays": True}},
+        {"$lookup": {
+          "from": "choices",
+          "localField": "pages._id",
+          "foreignField": "pageId",
+          "as": "pages.choices"
+        }},
+        {"$group": {
+          "_id": "$_id",
+          "title": {"$first": "$title"},
+          "summary": {"$first": "$summary"},
+          "userId": {"$first": "$userId"},
+          "cover": {"$first": "$cover"},
+          "createdAt":{"$first": "$createdAt"},
+          "updatedAt":{"$first": "$updatedAt"},
+          "totalCharacters":{"$first": "$totalCharacters"},
+          "totalEnd":{"$first": "$totalEnd"},
+          "totalPages":{"$first": "$totalPages"},
+          "totalOpenNode":{"$first": "$totalOpenNode"},
+          "pages": {"$push": "$pages"}
+        }},
+        {"$project": {
+          "_id": 1,
+          "title": 1,
+          "summary": 1,
+          "cover":1,
+          "createdAt":1,
+          "updatedAt":1,
+          "totalCharacters":1,
+          "totalEnd":1,
+          "totalPages":1,
+          "totalOpenNode":1,
+          "userId": 1,
+          "pages": {
+            "$map": {
+              "input": "$pages",
+              "as": "page",
+              "in": {
+                "_id": "$$page._id",
+                "title": "$$page.title",
+                "text": "$$page.text",
+                "end": "$$page.end",
+                "first": "$$page.first",
+                "totalCharacters": "$$page.totalCharacters", 
+                "previousPageId": "$$page.previousPageId",
+                "image":"$$page.image",
+                "choices": {
+                  "$map": {
+                    "input": "$$page.choices",
+                    "as": "choice",
+                    "in": {
+                      "_id": "$$choice._id",
+                      "title": "$$choice.title",
+                      "pageId": "$$choice.pageId",
+                      "sendToPageId": "$$choice.sendToPageId",
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }}
+      ]
+      
+      stories = list(self.collection.aggregate(pipeline))
+      story = stories[0]
+      if not story:
+        raise ValueError("Story not found")
+      return to_entity(story)
+    except Exception as e:
+      raise Exception(f"An error occurred while retrieving the full story with id {story_id}: {e}") from e
+  
   def delete_story(self, story_id:str) ->bool:
     """
     Delete a story by its identifier.
@@ -114,6 +199,8 @@ class stories_repository:
   
     story_data = to_dict(s)
     story_data["userId"] = ObjectId(story_data["userId"])
+    story_data.pop("id", None)
+    story_data.pop("pages", None)
     try:
       result = self.collection.insert_one(story_data)
 
@@ -146,8 +233,9 @@ class stories_repository:
       raise ValueError("Story title cannot be empty.")
   
     story_data = to_dict(story)
-    story_data.pop("id")
-    story_data.pop("userId")
+    story_data.pop("id", None)
+    story_data.pop("userId", None)
+    story_data.pop("pages", None)
     try:
       result = self.collection.update_one(
         {"_id": ObjectId(story.id)},
